@@ -1,0 +1,21 @@
+services:
+  ubuntu-web-1:
+    image: dimon11k/ansible-ubuntu-web:latest
+    container_name: ubuntu-web-1
+    ports:
+      - "2221:22"
+      - "8081:80"
+
+  ubuntu-web-2:
+    image: dimon11k/ansible-ubuntu-web:ubuntu2
+    container_name: ubuntu-web-2
+    ports:
+      - "2224:22"
+      - "8084:80"
+
+  centos-web-3:
+    image: dimon11k/ansible-rocky-web:latest
+    container_name: centos-web-3
+    ports:
+      - "2223:22"
+      - "8083:80"

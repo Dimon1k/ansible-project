@@ -1,2 +1,32 @@
-<h1>Hello</h1>
-<p>Apache from {{ ansible_distribution }}</p>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Мій Docker Проект</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <button onclick="toggleDarkMode()">Toggle Dark Mode 🌙</button>
+
+        <h1>Привіт з Ansible! 🐳</h1>
+
+        <p>Цей сервер працює на: <strong>{{ ansible_distribution }}</strong></p>
+
+        {% if ansible_os_family == "Debian" %}
+        <p>Це Ubuntu-сервер, налаштований через Ansible.</p>
+        {% elif ansible_os_family == "RedHat" %}
+        <p>Це CentOS/RedHat-сервер, налаштований через Ansible.</p>
+        {% endif %}
+
+        <p>Як тебе звати?</p>
+        <input type="text" id="userName" placeholder="Введіть ім'я...">
+        <p>Обери свій настрій (колір):</p>
+        <input type="color" id="colorPicker" value="#6495ed">
+        <button onclick="updatePage()">Застосувати</button>
+        <h2 id="greeting"></h2>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+

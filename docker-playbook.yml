@@ -1,4 +1,4 @@
-- name: Setup Web Servers
+- name: Setup Web Servers in Docker containers
   hosts: webservers
   become: yes
 
@@ -24,14 +24,25 @@
         enabled: yes
       when: ansible_os_family == "Debian"
 
-    - name: Start Apache on CentOS
-      service:
-        name: httpd
-        state: started
-        enabled: yes
-      when: ansible_os_family == "RedHat"
+    # REMOVE or comment out this block for DOCKER version:
+    # - name: Start Apache on CentOS
+    #   service:
+    #     name: httpd
+    #     state: started
+    #     enabled: yes
+    #   when: ansible_os_family == "RedHat"
 
-    - name: Deploy template
+    - name: Deploy HTML template
       template:
         src: index.html.j2
         dest: /var/www/html/index.html
+
+    - name: Deploy CSS
+      copy:
+        src: style.css
+        dest: /var/www/html/style.css
+
+    - name: Deploy JS
+      copy:
+        src: script.js
+        dest: /var/www/html/script.js

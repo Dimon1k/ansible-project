@@ -1,0 +1,27 @@
+services:
+  ubuntu-web-1:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.ubuntu
+    container_name: ubuntu-web-1
+    ports:
+      - "2221:22"
+      - "8081:80"
+
+  ubuntu-web-2:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.ubuntu
+    container_name: ubuntu-web-2
+    ports:
+      - "2224:22"
+      - "8084:80"
+
+  centos-web-3:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.rocky
+    container_name: centos-web-3
+    ports:
+      - "2223:22"
+      - "8083:80"
