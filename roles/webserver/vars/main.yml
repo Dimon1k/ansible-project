@@ -1,0 +1,7 @@
+apache_package:
+  Debian: apache2
+  RedHat: httpd
+
+apache_service:
+  Debian: apache2
+  RedHat: httpd

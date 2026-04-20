@@ -1,0 +1,29 @@
+- name: Install Apache
+  package:
+    name: "{{ apache_package[ansible_os_family] }}"
+    state: present
+
+- name: Ensure Apache is running
+  service:
+    name: "{{ apache_service[ansible_os_family] }}"
+    state: started
+    enabled: true
+  when: manage_service
+
+- name: Deploy HTML
+  template:
+    src: index.html.j2
+    dest: "{{ web_root }}/index.html"
+  notify: Restart Apache
+
+- name: Deploy CSS
+  copy:
+    src: style.css
+    dest: "{{ web_root }}/style.css"
+  notify: Restart Apache
+
+- name: Deploy JS
+  copy:
+    src: script.js
+    dest: "{{ web_root }}/script.js"
+  notify: Restart Apache

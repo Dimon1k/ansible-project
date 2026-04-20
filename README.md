@@ -1,93 +1,125 @@
-# DevOps Lab – Ansible + Docker + VMs
+# DevOps Lab – Ansible + Docker + VMs (Production Structure)
 
-## 1. Підготовка
+## 1. Requirements
 
-На машині викладача потрібні:
+You need:
 
-- Docker / Docker Compose
+- Docker + Docker Compose
 - Ansible
+- SSH (for VM access)
 
-У корені проєкту всі файли: `vm-*.yml`, `docker-*.yml`, `docker-compose*.yml`, `dockerfiles/`, `index.html.j2`, `style.css`, `script.js`.
+Project uses:
+
+- Role-based Ansible structure
+- YAML inventories
+- Environment separation (docker / vm)
 
 ---
 
-## 2. Запуск Docker‑контейнерів (3 веб‑сервери)
+## 2. Project Structure (Mental Model)
 
-1. Клонувати репозиторій:
+```
+ansible-project/
+├── inventories/     # WHERE (targets)
+├── playbooks/       # WHAT (orchestration)
+├── roles/           # HOW (logic)
+├── docker/          # Docker environment
+├── scripts/         # Run helpers
+```
+
+---
+
+## 3. Clone Project
 
 ```bash
 git clone https://github.com/Dimon1k/ansible-project.git
 cd ansible-project
+````
+
+---
+
+# 🐳 DOCKER ENVIRONMENT
+
+## 4. Start Docker Containers
+
+Go to docker folder:
+
+```bash
+cd docker
 ```
 
-2. Підняти 3 контейнери з веб‑серверами:
+Run containers:
 
 ```bash
 docker compose -f docker-compose.teacher.yml up -d
 ```
 
-Контейнери:
+Containers:
 
-- `ubuntu-web-1` → порт `8081`
-- `ubuntu-web-2` → порт `8084`
-- `centos-web-3` → порт `8083`
+* ubuntu-web-1 → [http://localhost:8081](http://localhost:8081)
+* ubuntu-web-2 → [http://localhost:8084](http://localhost:8084)
+* centos-web-3 → [http://localhost:8083](http://localhost:8083)
 
 ---
 
-## 3. Запуск Ansible для контейнерів
+## 5. Run Ansible for Docker
 
-Inventory для контейнерів: `docker-inventory.ini`  
-Playbook: `docker-playbook.yml`  
-Конфігурація Ansible: `ansible.cfg` (вимкнена перевірка host key)
-
-Запустити:
+Go back to root:
 
 ```bash
-./run-ansible.sh docker
+cd ..
 ```
 
-Або напряму:
+Run:
 
 ```bash
-ansible-playbook -i docker-inventory.ini docker-playbook.yml
+./scripts/run.sh docker
 ```
 
-Якщо виникає помилка, почистіть старі host keys:
+---
+
+## ⚠️ If SSH error appears (important)
+
+If you see:
+
+```
+REMOTE HOST IDENTIFICATION HAS CHANGED
+```
+
+Run:
 
 ```bash
 ssh-keygen -R "[127.0.0.1]:2221"
 ssh-keygen -R "[127.0.0.1]:2224"
 ssh-keygen -R "[127.0.0.1]:2223"
-
 ```
-
-Ansible:
-
-- підключається по SSH до 3 контейнерів,
-- ставить/перевіряє Apache (`apache2` / `httpd`),
-- копіює `index.html.j2`, `style.css`, `script.js` у `/var/www/html`,
-- сайт оновлюється автоматично.
-
-Після виконання playbook сторінки знову доступні за:
-
-- http://localhost:8081
-- http://localhost:8084
-- http://localhost:8083
 
 ---
 
-## 4. Запуск Ansible для віртуальних машин (опційно)
+# 🖥️ VM ENVIRONMENT
 
-Якщо є підготовлені ВМ (2×Ubuntu + 1×CentOS) з IP, прописаними у `vm-inventory.ini`, можна запустити playbook для ВМ:
+## 6. VM Requirements
 
-```bash
-./run-ansible.sh vms
+You must have:
+
+* 2× Ubuntu + 1× CentOS/Rocky VM
+* SSH configured via `~/.ssh/config`
+
+Example:
+
+```ssh
+Host ubuntu-vm1
+  HostName 192.168.56.5
+  User admin
+  IdentityFile ~/.ssh/id_rsa_ansible
 ```
 
-або:
+---
+
+## 7. Run Ansible for VMs
+
+From project root:
 
 ```bash
-ansible-playbook -i vm-inventory.ini vm-playbook.yml --ask-become-pass
+./scripts/run.sh vm
 ```
-
-Цей playbook виконує ту саму логіку, що і для Docker‑контейнерів, але на віртуальних машинах.
